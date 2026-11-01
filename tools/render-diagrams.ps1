@@ -51,6 +51,26 @@ public static class ReadableDiagrams {
         Text(rate,x+15,y+80,670,80,60,true,blue);
         Text(detail,x+20,y+165,660,60,33,false,ink);
     }
+    static void AudioMethod(string dir,bool project) {
+        Begin(650);
+        Title(project ? "USB AirPods - microphone ON" : "Bluetooth Classic HFP - microphone ON");
+        Box("Windows PC",project ? "USB audio\nvia Pico 2 W" : "Bluetooth\nadapter",60,210,350,270);
+        Box("AirPods","Speaker + mic",1190,210,350,270);
+        string speaker=project ? "SPEAKER: 48 kHz stereo" : "SPEAKER: 8 / 16 kHz mono";
+        string mic=project ? "MIC: 64 kHz mono USB*" : "MIC: 8 / 16 kHz mono";
+        Text(speaker,430,180,740,75,42,true,blue);
+        Arrow(440,1160,280,"");
+        Text(mic,430,335,740,75,42,true,blue);
+        Arrow(1160,440,435,"");
+        if(project) {
+            Text("Stereo playback + a separate AACP / AAC-ELD microphone path.",60,515,1480,55,32,false,ink);
+            Text("*USB interface: 64 kHz. Decoder: 48 kHz. Native mic timing/fidelity is not verified.",60,580,1480,55,30,false,ink);
+        } else {
+            Text("Opening the headset mic switches stereo music to mono call audio.",60,515,1480,55,32,false,ink);
+            Text("8 kHz = narrowband. 16 kHz = wideband. Depends on the negotiated HFP codec.",60,580,1480,55,30,false,ink);
+        }
+        End(System.IO.Path.Combine(dir,project ? "usb-airpods-two-way.png" : "bluetooth-hfp-two-way.png"));
+    }
     public static void Render(string dir) {
         Begin(550);
         using(var p=new Pen(ink,8)) {
@@ -71,18 +91,8 @@ public static class ReadableDiagrams {
         Text("Pico 2 W",600,475,400,65,39,true,ink);
         Text("AirPods",1140,475,400,65,39,true,ink);
         End(System.IO.Path.Combine(dir,"hardware-connection.png"));
-        Begin(590); Title("Microphone ON: what changes?");
-        using(var brush=new SolidBrush(Color.FromArgb(244,246,249))) g.FillRectangle(brush,60,160,700,370);
-        using(var brush=new SolidBrush(Color.FromArgb(232,243,255))) g.FillRectangle(brush,840,160,700,370);
-        Text("BLUETOOTH CALL MODE",85,185,650,75,42,true,ink);
-        Text("USB AIRPODS",865,185,650,75,42,true,blue);
-        Text("Speaker",90,295,640,60,34,false,ink);
-        Text("8 / 16 kHz mono",90,350,640,80,52,true,ink);
-        Text("Mic: 8 / 16 kHz mono",90,450,640,55,34,false,ink);
-        Text("Speaker",870,295,640,60,34,false,ink);
-        Text("48 kHz stereo",870,350,640,80,52,true,blue);
-        Text("Mic: separate AACP stream",870,450,640,55,34,false,ink);
-        End(System.IO.Path.Combine(dir,"bluetooth-comparison.png"));
+        AudioMethod(dir,false);
+        AudioMethod(dir,true);
     }
 }
 '@ -ReferencedAssemblies System.Drawing

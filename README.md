@@ -27,7 +27,13 @@ Connect the PC to the Pico over **USB**, then pair AirPods with the Pico over **
 
 **With the microphone on, standard Bluetooth Classic switches to voice-call audio. USB AirPods keeps stereo playback running.**
 
-![With the microphone active: Bluetooth HFP uses 8 or 16 kHz mono audio; USB AirPods keeps 48 kHz stereo playback with a separate AACP microphone stream](docs/images/bluetooth-comparison.png)
+### Standard Bluetooth Classic
+
+![Bluetooth HFP: 8 or 16 kHz mono speaker and microphone paths](docs/images/bluetooth-hfp-two-way.png)
+
+### USB AirPods
+
+![USB AirPods: 48 kHz stereo speaker path and 64 kHz mono USB mic interface, with decoder-rate caveat](docs/images/usb-airpods-two-way.png)
 
 - **Standard Bluetooth Classic (HFP):** both speaker and microphone use mono call audio: **8 kHz narrowband** or **16 kHz wideband**, depending on the negotiated codec. This is the familiar switch from stereo music to voice-call sound when the headset microphone opens. These rates are documented by [Microsoft](https://learn.microsoft.com/en-us/windows-hardware/drivers/bluetooth/bluetooth-classic-audio).
 - **USB AirPods:** playback stays at **48 kHz stereo** while the microphone uses a separate AACP/AAC-ELD path. The firmware presents a **64 kHz mono USB microphone interface** to Windows (`USB_MIC_SAMPLE_RATE` in `src/tinyusb/usb_descriptors.h`). The decoder reports **48 kHz** and native microphone timing is still under investigation, so the USB interface rate must not be read as proven 64 kHz recording fidelity.
