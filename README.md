@@ -37,17 +37,14 @@ The companion reads cached battery information and sends ANC requests through th
 
 ## Standard Bluetooth adapter vs. USB AirPods
 
-This comparison covers the standard **Windows Bluetooth Classic A2DP/HFP** path. It does not describe every wireless headset or Bluetooth LE Audio configuration.
+**With the microphone on, standard Bluetooth Classic switches to voice-call audio. USB AirPods keeps stereo playback running.**
 
-![Speaker and microphone paths: standard Bluetooth music mode, HFP voice mode, and simultaneous USB AirPods stereo plus microphone](docs/images/bluetooth-comparison.png)
+![Two-way audio comparison: Bluetooth HFP speaker and microphone at 8 or 16 kHz mono versus USB AirPods 48 kHz stereo playback and a 64 kHz USB microphone interface](docs/images/bluetooth-comparison.png)
 
-The diagram separates the two standard Classic Bluetooth operating modes. Music playback uses stereo A2DP; opening the headset microphone switches playback and capture to the HFP mono voice profile. This project keeps 48 kHz stereo AAC-ELD playback running while receiving the microphone through a separate AACP/AAC-ELD path. The microphone decoder reports 48 kHz, but its raw protocol timing remains under investigation; this is not a measured microphone-quality, latency, or range benchmark.
+- **Standard Bluetooth Classic (HFP):** both speaker and microphone use mono call audio: **8 kHz narrowband** or **16 kHz wideband**, depending on the negotiated codec. This is the familiar switch from stereo music to voice-call sound when the headset microphone opens. These rates are documented by [Microsoft](https://learn.microsoft.com/en-us/windows-hardware/drivers/bluetooth/bluetooth-classic-audio).
+- **USB AirPods:** playback stays at **48 kHz stereo** while the microphone uses a separate AACP/AAC-ELD path. The firmware presents a **64 kHz mono USB microphone interface** to Windows (`USB_MIC_SAMPLE_RATE` in `src/tinyusb/usb_descriptors.h`). The decoder reports **48 kHz** and native microphone timing is still under investigation, so the USB interface rate must not be read as proven 64 kHz recording fidelity.
 
-Windows Classic Audio switches to HFP when the headset microphone is opened; A2DP and HFP are alternative operating paths in the upper diagram, not simultaneous stereo-plus-microphone streams. See Microsoft's [Bluetooth Classic Audio documentation](https://learn.microsoft.com/en-us/windows-hardware/drivers/bluetooth/bluetooth-classic-audio).
-
-**LE Audio is a separate case:** compatible Windows 11 PCs and headsets can support stereo while the microphone is active. The Classic Audio limitation above should not be generalized to those systems; see Microsoft's [LE Audio quality settings](https://support.microsoft.com/en-us/windows/hardware/bluetooth/configuring-bluetooth-le-audio-quality-settings-on-windows-11).
-
-This project still uses Bluetooth between the Pico and AirPods. It moves the Bluetooth stack and audio handling onto the Pico; it does not replace that wireless link with USB or claim lower latency, better range, or universal headset compatibility.
+This comparison is about Bluetooth Classic HFP, not all Bluetooth devices. Compatible [Windows LE Audio systems](https://support.microsoft.com/en-us/windows/hardware/bluetooth/configuring-bluetooth-le-audio-quality-settings-on-windows-11) can also retain stereo with an active mic. Sampling rates alone are not a measured sound-quality score; no microphone-quality, latency, or range benchmark is claimed.
 
 ## Download and run
 
