@@ -21,39 +21,17 @@ This repository contains the **case-battery-anc-v1** firmware and Windows compan
 
 ### Physical connection
 
-```mermaid
-flowchart LR
-    PC["Windows computer"] <-->|"USB cable: power, audio and serial data"| Pico["Raspberry Pi Pico 2 W"]
-    Pico <-->|"Bluetooth"| Pods["AirPods"]
-```
+![Windows PC illustration, USB link, Pico 2 W photo, Bluetooth link, and AirPods photo](docs/images/hardware-connection.png)
+
+*Hardware overview. Product photos: [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) and [Apple Newsroom](https://www.apple.com/newsroom/2024/09/apple-introduces-airpods-4-and-a-hearing-health-experience-with-airpods-pro-2/). Windows PC and connection symbols are illustrations. Photos are not to scale.*
+
+![Physical block diagram: Windows computer connected by USB to Pico 2 W, then Bluetooth to AirPods](docs/images/physical-connection.png)
 
 Plug the Pico into the computer over USB and pair the AirPods with the Pico. The Pico handles Bluetooth; Windows sees a USB audio device and a serial port. The Windows companion runs on the computer and uses that same USB cable.
 
 ### Audio and application data
 
-```mermaid
-flowchart LR
-    subgraph PC["Windows computer"]
-        Audio["Windows audio applications"]
-        Tray["USBAirPods tray companion"]
-    end
-    subgraph Pico["Pico 2 W"]
-        USB["USB audio interface"]
-        CDC["USB serial interface"]
-        Firmware["Bluetooth audio and AACP firmware"]
-    end
-    Pods["AirPods"]
-    Audio -->|"USB stereo playback"| USB
-    USB -->|"USB microphone audio"| Audio
-    USB <-->|"Audio processing"| Firmware
-    Firmware -->|"A2DP playback: AAC-ELD"| Pods
-    Pods -->|"AACP microphone stream"| Firmware
-    Tray -->|"Cached-status queries and ANC requests"| CDC
-    CDC -->|"Battery, device and confirmed ANC status"| Tray
-    CDC <-->|"Status cache and command dispatch"| Firmware
-    Pods -->|"Battery and ANC notifications"| Firmware
-    Firmware -->|"ANC mode command"| Pods
-```
+![Readable block diagrams for stereo playback, microphone audio, and battery ANC controls](docs/images/audio-control-paths.png)
 
 The companion reads cached battery information and sends ANC requests through the Pico. Audio applications use the separate USB audio interface, so the companion does not carry the playback or microphone stream. Closing the companion stops monitoring; it does not disconnect the AirPods Bluetooth link.
 
@@ -61,33 +39,9 @@ The companion reads cached battery information and sends ANC requests through th
 
 This comparison covers the standard **Windows Bluetooth Classic A2DP/HFP** path. It does not describe every wireless headset or Bluetooth LE Audio configuration.
 
-```mermaid
-flowchart TB
-    subgraph Standard["Standard Bluetooth adapter · Windows Bluetooth Classic"]
-        direction LR
-        Win["Windows audio apps and Bluetooth stack"] <-->|"USB / built-in radio interface"| Adapter["Standard Bluetooth adapter"]
-        Adapter -->|"A2DP: stereo playback when headset mic is inactive"| StandardPods["AirPods"]
-        Adapter <-->|"HFP: mono playback and microphone when headset mic is active"| StandardPods
-    end
-    subgraph Project["This project · USB AirPods"]
-        direction LR
-        Apps["Windows audio apps"] <-->|"USB audio: stereo playback and microphone"| Bridge["Pico 2 W: audio processing and Bluetooth stack"]
-        Companion["Windows tray companion"] <-->|"USB serial: battery status and ANC control"| Bridge
-        Bridge -->|"A2DP / AAC-ELD: stereo playback"| ProjectPods["AirPods"]
-        ProjectPods -->|"AACP: microphone audio and status"| Bridge
-        Bridge -->|"AACP: ANC commands"| ProjectPods
-    end
-```
+![Speaker and microphone paths: standard Bluetooth music mode, HFP voice mode, and simultaneous USB AirPods stereo plus microphone](docs/images/bluetooth-comparison.png)
 
-| Feature | Standard Windows Bluetooth Classic adapter | This project |
-| --- | --- | --- |
-| Device presented to Windows | Bluetooth radio; AirPods paired through Windows | USB audio device and serial port; AirPods paired with the Pico |
-| Bluetooth stack runs on | Windows | Pico 2 W |
-| Playback without headset mic | Stereo over A2DP | 48 kHz stereo over AAC-ELD/A2DP |
-| Playback while using headset mic | Switches to HFP mono playback/capture | Keeps stereo playback alongside the AACP microphone stream |
-| Battery and ANC in this companion | This companion does not control a standard adapter | Cached battery readings and confirmed ANC control through the Pico |
-| Setup | Windows Bluetooth pairing | Flash the Pico, pair AirPods with it, then run the optional companion |
-| Compatibility | Depends on the adapter, Windows drivers and headset profiles | Experimental; this release was tested with AirPods 4 ANC |
+The diagram separates the two standard Classic Bluetooth operating modes. Music playback uses stereo A2DP; opening the headset microphone switches playback and capture to the HFP mono voice profile. This project keeps 48 kHz stereo AAC-ELD playback running while receiving the microphone through a separate AACP/AAC-ELD path. The microphone decoder reports 48 kHz, but its raw protocol timing remains under investigation; this is not a measured microphone-quality, latency, or range benchmark.
 
 Windows Classic Audio switches to HFP when the headset microphone is opened; A2DP and HFP are alternative operating paths in the upper diagram, not simultaneous stereo-plus-microphone streams. See Microsoft's [Bluetooth Classic Audio documentation](https://learn.microsoft.com/en-us/windows-hardware/drivers/bluetooth/bluetooth-classic-audio).
 
