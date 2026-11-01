@@ -1,0 +1,29 @@
+# this will handle to macos hidden folders
+# ignore all starts with .* except .git and so on
+.*
+!.git*
+!.editorconfig
+!.vscode/launch.json
+!.vscode/settings.json
+
+# build folder
+/build*
+# Local diagnostics and generated artifacts
+*.log
+*.zip
+__pycache__/
+*.pyc
+
+# Windows companion generated outputs
+/windows-tray/dist/
+/windows-tray/test-output/
+
+# Retained local development history (not part of the clean release)
+/firmware/
+/AUDIO_RECOVERY_PLAN.md
+/CASE_LIFECYCLE.md
+/aac-eld-apple.md
+/capture-range-review.ps1
+/logo.png
+/docs/images/audio-comparison.svg
+/docs/images/setup.svg
