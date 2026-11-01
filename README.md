@@ -11,6 +11,52 @@ This repository contains the **case-battery-anc-v1** firmware and Windows compan
 - A dashboard that opens above the taskbar at the lower-right when you click the tray icon.
 - Closed-case disconnection, lid-open reconnection preparation, and automatic recovery after range loss.
 
+## Windows companion
+
+![Windows companion dashboard showing battery cards and ANC controls](docs/images/windows-dashboard.png)
+
+*Dashboard preview with sample battery values.* Click the tray icon to open this window at the lower-right above the taskbar. Each card shows the latest available battery reading and charging state. Select an enabled ANC mode to request a change; the current selection follows the mode confirmed by the headphones.
+
+## Connection diagrams
+
+### Physical connection
+
+```mermaid
+flowchart LR
+    PC["Windows computer"] <-->|"USB cable: power, audio and serial data"| Pico["Raspberry Pi Pico 2 W"]
+    Pico <-->|"Bluetooth"| Pods["AirPods"]
+```
+
+Plug the Pico into the computer over USB and pair the AirPods with the Pico. The Pico handles Bluetooth; Windows sees a USB audio device and a serial port. The Windows companion runs on the computer and uses that same USB cable.
+
+### Audio and application data
+
+```mermaid
+flowchart LR
+    subgraph PC["Windows computer"]
+        Audio["Windows audio applications"]
+        Tray["USBAirPods tray companion"]
+    end
+    subgraph Pico["Pico 2 W"]
+        USB["USB audio interface"]
+        CDC["USB serial interface"]
+        Firmware["Bluetooth audio and AACP firmware"]
+    end
+    Pods["AirPods"]
+    Audio -->|"USB stereo playback"| USB
+    USB -->|"USB microphone audio"| Audio
+    USB <-->|"Audio processing"| Firmware
+    Firmware -->|"A2DP playback: AAC-ELD"| Pods
+    Pods -->|"AACP microphone stream"| Firmware
+    Tray -->|"Cached-status queries and ANC requests"| CDC
+    CDC -->|"Battery, device and confirmed ANC status"| Tray
+    CDC <-->|"Status cache and command dispatch"| Firmware
+    Pods -->|"Battery and ANC notifications"| Firmware
+    Firmware -->|"ANC mode command"| Pods
+```
+
+The companion reads cached battery information and sends ANC requests through the Pico. Audio applications use the separate USB audio interface, so the companion does not carry the playback or microphone stream. Closing the companion stops monitoring; it does not disconnect the AirPods Bluetooth link.
+
 ## Download and run
 
 [Download the latest release](https://github.com/ermanon/USB-AirPods/releases/latest)
