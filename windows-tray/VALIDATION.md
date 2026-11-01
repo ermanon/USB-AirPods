@@ -1,3 +1,3 @@
-# Windows doğrulaması
+# Windows validation
 
-Güncel sonuçlar [proje doğrulama kaydında](../VALIDATION.md). Derleme ve 23 protokol kontrolü geçti. Pil/ANC ve temiz stereo/mikrofon kullanıcı tarafından doğrulandı. Pencere sağ altta açılır.
+Current results are in the [project validation record](../VALIDATION.md). Compilation and 23 protocol checks passed. The user confirmed battery/ANC operation and clean stereo playback/microphone use. The dashboard opens at the lower-right.

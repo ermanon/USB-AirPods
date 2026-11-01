@@ -1,62 +1,62 @@
 # USB AirPods
 
-Raspberry Pi Pico 2 W üzerinden AirPods için USB ses çıkışı, mikrofon ve Windows tepsi uygulaması.
+USB audio playback, microphone support, and a Windows tray companion for AirPods through a Raspberry Pi Pico 2 W.
 
-## Güncel sürüm: v1.1.0
+## Current release: v1.1.0
 
-Bu depo, birlikte çalıştığı cihaz üzerinde doğrulanan **case-battery-anc-v1** firmware'i ve Windows uygulamasını içerir.
+This repository contains the **case-battery-anc-v1** firmware and Windows companion, verified together on physical hardware.
 
-- 48 kHz stereo ses çıkışı ve aynı anda mikrofon kullanımı.
-- Windows tepsisinden sol/sağ/kutu pil bilgisi ve ANC kontrolü.
-- Tepsi simgesine tıklayınca görev çubuğunun üzerinde, sağ altta açılan pencere.
-- Kapalı kutuda bağlantıyı kapatma, kapak açılışında yeniden bağlantı hazırlığı ve menzil kaybında otomatik toparlanma.
+- 48 kHz stereo playback with simultaneous microphone use.
+- Left, right, and case battery status and ANC control from the Windows tray.
+- A dashboard that opens above the taskbar at the lower-right when you click the tray icon.
+- Closed-case disconnection, lid-open reconnection preparation, and automatic recovery after range loss.
 
-## İndir ve çalıştır
+## Download and run
 
-[Son sürümün indirme sayfası](https://github.com/ermanon/USB-AirPods/releases/latest)
+[Download the latest release](https://github.com/ermanon/USB-AirPods/releases/latest)
 
-Dosyalar ayrıca [downloads](downloads) klasöründe bulunur:
+The files are also available in [downloads](downloads):
 
-1. Pico 2 W'yi **BOOTSEL'e basılı tutarak** USB'ye bağlayın.
-2. **PicoW_USB_BT_Audio.uf2** dosyasını görünen yükleme sürücüsüne kopyalayın; Pico yeniden başlar.
-3. AirPods'u bağlayın. Bağlantı yokken kısa BOOTSEL basışı seçili cihaza bağlanmayı dener; uzun basıp bırakmak cihaz aramasını başlatır. Tarama ilk uygun ses cihazını seçebilir; eşleştirme sırasında diğer ses cihazlarını eşleştirme modunda bırakmayın.
-4. **USBAirPods.exe** dosyasını çalıştırın. Windows 10/11 ve .NET Framework 4.x gerektirir; kurulum veya yönetici yetkisi istemez.
-5. Windows ses çıkışı/girişinde Pico'nun USB ses aygıtını seçin. Tepsi simgesine tıklayarak durum ekranını açın.
+1. Hold **BOOTSEL** while connecting the Pico 2 W to USB.
+2. Copy **PicoW_USB_BT_Audio.uf2** to the bootloader drive. The Pico restarts automatically.
+3. Connect your AirPods. When disconnected, a short BOOTSEL press attempts to reconnect to the selected device; a long press followed by release starts discovery. Discovery may select the first compatible audio device, so keep other audio devices out of pairing mode during setup.
+4. Run **USBAirPods.exe**. Requires Windows 10/11 and .NET Framework 4.x; no installation or administrator privileges are needed.
+5. Select the Pico USB audio device as the Windows output/input. Click the tray icon to open the dashboard.
 
-Bilgisayarın Bluetooth adaptörü kullanılmaz. AirPods'un kendi yazılımı değiştirilmez.
+The computer's Bluetooth adapter is not used. The AirPods' own firmware is not modified.
 
-## Pil ve ANC
+## Battery and ANC
 
-Pil sorguları kulaklığa ek istek göndermek yerine Pico'nun aldığı bildirimleri okur. Kutu pili her zaman bildirilmez; alınmayan veya eski bilgi **bilinmiyor** olarak gösterilir.
+Battery queries read notifications cached by the Pico rather than sending additional requests to the headphones. The case does not always report its battery; missing or stale information is shown as **unknown**.
 
-Yalnızca kulaklığın mevcut bağlantıda bildirdiği ANC modları etkinleşir. Bir modu ilk kez kullanmak için kulaklığın kendi kontrolüyle o moda geçin. Uygulama, komutun kuyruğa alınmasını başarı saymaz; kulaklıktan mod onayı bekler. Yeniden bağlantıda mod doğrulaması sıfırlanır.
+Only ANC modes reported by the headphones during the current connection are enabled. To enable a mode for the first time, select it using the headphones' own controls. Queuing a command does not count as success: the app waits for a mode notification from the headphones. Mode verification resets on reconnection.
 
-USB connection menüsü seri port izlemeyi seçer; AirPods Bluetooth bağlantısını kesen bir menü değildir. Başka günlük uygulaması COM portunu kullanıyorsa kapatın.
+The **USB connection** menu selects serial monitoring; it does not disconnect the AirPods Bluetooth link. Close other logging applications that have the COM port open.
 
-## Doğrulama ve sınırlar
+## Validation and limitations
 
-AirPods 4 ANC üzerinde kullanıcı tarafından pil/ANC görüntüleme, uygulamadan ANC kapatma ve iki kulaklıkta temiz ses/mikrofon doğrulandı. Firmware derlemesi, pil/ANC ayrıştırıcı testleri, **2.515 ARM kontrolü** ve **23 Windows protokol kontrolü** geçti. Bkz. [VALIDATION.md](VALIDATION.md).
+On AirPods 4 ANC, the user confirmed battery/ANC display, switching ANC off from the app, and clean playback on both earbuds with microphone operation. Firmware compilation, battery/ANC parser tests, **2,515 ARM checks**, and **23 Windows protocol checks** passed. See [VALIDATION.md](VALIDATION.md).
 
-Proje deneyseldir. Önceki testlerde ilk bağlantıda tek kulaklık sessizliği ve yaklaşık 15 saniyelik toparlanma görüldü; kalıcı olarak giderildiği iddia edilmiyor. Pil/ANC eklenen sürümde uzun süreli kullanım ve tekrarlı menzil/kutu testleri yapılmadı. Mikrofonun ham protokol zamanlaması araştırılıyor; decoder 48 kHz raporluyor. Akışın açık görünmesi, duyulabilir sesin kanıtı değildir.
+This project is experimental. Earlier tests showed one earbud remaining silent after an initial connection and recovery taking approximately 15 seconds; no permanent fix is claimed. Long-duration use and repeated range/case cycles were not retested for the battery/ANC integration. Raw microphone protocol timing remains under investigation; the decoder reports 48 kHz. An active stream flag does not prove audible playback.
 
-## Kaynak koddan derleme
+## Build from source
 
-Firmware: Pico SDK **2.1.1**, Arm GNU **14.2.Rel1**, CMake ve Ninja. PICO_SDK_PATH ortam değişkenini SDK dizinine ayarlayın.
+Firmware requires Pico SDK **2.1.1**, Arm GNU **14.2.Rel1**, CMake, and Ninja. Set the PICO_SDK_PATH environment variable to your SDK directory.
 
 ```powershell
 cmake -S . -B build -G Ninja -DPICO_BOARD=pico2_w -DCMAKE_BUILD_TYPE=Release "-DCMAKE_C_FLAGS_RELEASE=-O3 -DNDEBUG -g"
 cmake --build build --parallel 4
 ```
 
-Windows uygulaması:
+Windows companion:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File windows-tray/build.ps1
 powershell -ExecutionPolicy Bypass -File windows-tray/test.ps1
 ```
 
-Firmware testleri ve bağımlılıkları [tests/README.md](tests/README.md) içinde açıklanır. İndirme dosyalarının özetleri [downloads/SHA256SUMS.txt](downloads/SHA256SUMS.txt) içindedir.
+Firmware tests and dependencies are described in [tests/README.md](tests/README.md). Download checksums are in [downloads/SHA256SUMS.txt](downloads/SHA256SUMS.txt).
 
-## Kaynaklar ve lisanslar
+## Credits and licenses
 
-[USBPods-Pico2W](https://github.com/wasdwasd0105/USBPods-Pico2W) ve [iki yönlü ses uygulaması](https://github.com/han-um/USBPods-Pico2W-2-way-audio-implement) üzerine geliştirilmiştir. AACP protokol çalışmaları için [LibrePods](https://github.com/librepods-org/librepods) topluluğuna teşekkürler. FDK-AAC ve LDAC kitaplıklarının lisansları kendi dizinlerindedir; proje lisansları [LICENSE](LICENSE) ve [LICENSE.Apache-2.0](LICENSE.Apache-2.0) dosyalarında korunmuştur.
+Built on [USBPods-Pico2W](https://github.com/wasdwasd0105/USBPods-Pico2W) and the [two-way audio implementation](https://github.com/han-um/USBPods-Pico2W-2-way-audio-implement). Thanks to the [LibrePods](https://github.com/librepods-org/librepods) community for its AACP protocol work. FDK-AAC and LDAC licenses are retained in their respective directories; project licenses are preserved in [LICENSE](LICENSE) and [LICENSE.Apache-2.0](LICENSE.Apache-2.0).

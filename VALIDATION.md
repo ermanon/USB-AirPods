@@ -1,20 +1,20 @@
-# v1.1.0 doğrulama kaydı
+# v1.1.0 validation record
 
-Tarih: 2026-11-01. Donanım: Pico 2 W ve AirPods 4 ANC. Firmware işareti: case-battery-anc-v1.
+Date: 2026-11-01. Hardware: Pico 2 W and AirPods 4 ANC. Firmware marker: case-battery-anc-v1.
 
-## Geçen kontroller
+## Passed checks
 
-- Pico SDK 2.1.1 / Arm GNU 14.2.Rel1 ile firmware derlemesi.
-- 2515 ARM kontrolü: ses toparlanması, kuyruk/IRQ sahipliği, zaman aşımı, paket sınırları, kutu/kimlik ve codec pazarlığı.
-- Native pil/ANC ayrıştırıcı testleri: kesilmiş/bozuk bildirimler, kısmi güncellemeler, geçersiz değerler, bağlantıda sıfırlama, sorgu kimlikleri ve ANC oturum/mod sınırları.
-- 23 Windows protokol kontrolü.
-- Pico flash yükleme ve picotool doğrulaması OK.
-- Gerçek USB sorgularından pil, ANC ve cihaz yanıtları.
-- ANC komutları için kuyruğa alma yanıtı; ayrı alınan kulaklık bildirimleriyle önce gürültü engelleme, ardından Off onayı.
-- Kullanıcı onayı: uygulamada pil yüzdeleri/ANC modu görünüyor; uygulamadan Off'a geçiş çalışıyor; iki kulaklık ve mikrofon temiz çalışıyor.
+- Firmware compilation with Pico SDK 2.1.1 / Arm GNU 14.2.Rel1.
+- 2,515 ARM checks covering audio recovery, queue/IRQ ownership, deadlines, packet bounds, case/identity policies, and codec negotiation.
+- Native battery/ANC parser tests covering truncated/malformed notifications, partial updates, invalid values, disconnect clearing, query nonces, and ANC session/mode restrictions.
+- 23 Windows protocol checks.
+- Pico flash loading and picotool verification: OK.
+- Battery, ANC, and device responses to real USB queries.
+- Queued acknowledgments for ANC commands, followed by separate headphone notifications confirming noise cancellation and then Off.
+- User confirmation: battery percentages and ANC mode are visible; selecting Off from the app works; both earbuds and the microphone work cleanly.
 
-## Sınırlar
+## Limitations
 
-Kutu pilinin bildirilmediği durum bilinmiyor olarak gösterildi. ANC modları yalnızca bu bağlantıda kulaklığın bildirdiği modlarla sınırlı. Önceki kutudan dönüş testinde tek taraflı sessizlik ve yaklaşık 15 saniyelik otomatik toparlanma görüldü; kalıcı çözüm iddia edilmiyor. Yeni pil/ANC entegrasyonunda tekrarlı menzil/kutu döngüleri ve uzun süreli dayanıklılık test edilmedi.
+Missing case battery data was correctly displayed as unknown. ANC controls are limited to modes reported by the headphones during the current connection. An earlier case-return test showed unilateral silence and approximately 15-second automatic recovery; no permanent fix is claimed. Repeated range/case cycles and long-duration stability were not retested for the new battery/ANC integration.
 
-Ham günlükler, cihaz adresleri ve eski deneme firmware'leri bu temiz sürüme dahil edilmedi. App EXE yanına sınırlı boyutlu companion-status.log ve bir döndürülmüş kopya yazabilir; bunlar yalnızca yerel tanılama içindir ve Git'e dahil edilmez.
+Raw logs, device addresses, and older experimental firmware are excluded from this clean release. The app may write a size-limited companion-status.log and one rotated copy beside its EXE for local diagnostics; those files are not included in Git.
