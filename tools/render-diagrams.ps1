@@ -52,7 +52,7 @@ public static class ReadableDiagrams {
         Text(detail,x+20,y+165,660,60,33,false,ink);
     }
     public static void Render(string dir) {
-        Begin(650); Title("Windows PC + USB + Pico 2 W + Bluetooth + AirPods");
+        Begin(550);
         using(var p=new Pen(ink,8)) {
             g.DrawRectangle(p,112,205,296,185); g.DrawLine(p,260,390,260,435); g.DrawLine(p,195,435,325,435);
         }
@@ -70,47 +70,18 @@ public static class ReadableDiagrams {
         Text("Windows PC",60,475,400,65,39,true,ink);
         Text("Pico 2 W",600,475,400,65,39,true,ink);
         Text("AirPods",1140,475,400,65,39,true,ink);
-        Note("USB cable: power + audio + status. Bluetooth (BT): Pico to AirPods.",565,65);
         End(System.IO.Path.Combine(dir,"hardware-connection.png"));
-        Begin(570); Title("Computer - Pico - AirPods");
-        Box("Windows computer","Audio apps + tray companion",60,180);
-        Box("Pico 2 W","USB audio + Bluetooth bridge",600,180);
-        Box("AirPods","Playback + microphone",1140,180);
-        Arrow(470,590,255,"USB",true); Arrow(1010,1130,255,"BT",true);
-        Note("USB carries power, audio and serial data. BT = Bluetooth; AirPods pair with the Pico.",425);
-        End(System.IO.Path.Combine(dir,"physical-connection.png"));
-
-        Begin(1160); Title("Audio and companion data paths");
-        Text("PLAYBACK",60,125,1480,55,36,true,blue);
-        Box("Windows app","Stereo playback",60,195);
-        Box("Pico 2 W","AAC-ELD encoder",600,195);
-        Box("AirPods","Stereo sound",1140,195);
-        Arrow(470,590,265,"USB"); Arrow(1010,1130,265,"A2DP");
-        Text("MICROPHONE",60,425,1480,55,36,true,blue);
-        Box("Windows app","Microphone input",60,495);
-        Box("Pico 2 W","Microphone decoder",600,495);
-        Box("AirPods","Microphone stream",1140,495);
-        Arrow(590,470,565,"USB"); Arrow(1130,1010,565,"AACP");
-        Text("BATTERY STATUS + ANC CONTROL",60,725,1480,55,36,true,blue);
-        Box("Windows tray app","Status display + controls",60,795);
-        Box("Pico 2 W","Status cache + commands",600,795);
-        Box("AirPods","Notifications + ANC",1140,795);
-        Arrow(470,590,865,"USB\nserial",true); Arrow(1010,1130,865,"AACP",true);
-        Note("Audio and microphone work together. The tray app uses a separate USB serial interface.",1040);
-        End(System.IO.Path.Combine(dir,"audio-control-paths.png"));
-
-        Begin(1290); Title("Two-way audio: what happens when the mic is ON?");
-        Text("STANDARD BLUETOOTH CLASSIC - HFP CALL MODE",50,135,1500,75,42,true,ink);
-        RateBox("SPEAKER", "8 / 16 kHz", "Mono voice-call playback",60,240);
-        RateBox("MICROPHONE", "8 / 16 kHz", "Mono voice capture",840,240);
-        Note("8 kHz = narrowband HFP. 16 kHz = wideband HFP.",510,70);
-        using(var p=new Pen(Color.FromArgb(213,224,237),3)) g.DrawLine(p,60,625,1540,625);
-        Text("USB AIRPODS - PLAYBACK STAYS STEREO",50,675,1500,75,44,true,blue);
-        RateBox("SPEAKER", "48 kHz stereo", "AAC-ELD playback stays active",60,780);
-        RateBox("MICROPHONE", "64 kHz USB*", "Mono USB input / AACP audio",840,780);
-        Note("Stereo playback and microphone run at the same time.",1050,70);
-        Text("*64 kHz is the USB microphone interface rate. Decoder reports 48 kHz;",60,1150,1480,50,30,false,ink);
-        Text("the native mic timing is under investigation. This is not proof of 64 kHz recording fidelity.",60,1200,1480,55,30,false,ink);
+        Begin(590); Title("Microphone ON: what changes?");
+        using(var brush=new SolidBrush(Color.FromArgb(244,246,249))) g.FillRectangle(brush,60,160,700,370);
+        using(var brush=new SolidBrush(Color.FromArgb(232,243,255))) g.FillRectangle(brush,840,160,700,370);
+        Text("BLUETOOTH CALL MODE",85,185,650,75,42,true,ink);
+        Text("USB AIRPODS",865,185,650,75,42,true,blue);
+        Text("Speaker",90,295,640,60,34,false,ink);
+        Text("8 / 16 kHz mono",90,350,640,80,52,true,ink);
+        Text("Mic: 8 / 16 kHz mono",90,450,640,55,34,false,ink);
+        Text("Speaker",870,295,640,60,34,false,ink);
+        Text("48 kHz stereo",870,350,640,80,52,true,blue);
+        Text("Mic: separate AACP stream",870,450,640,55,34,false,ink);
         End(System.IO.Path.Combine(dir,"bluetooth-comparison.png"));
     }
 }

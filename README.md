@@ -15,31 +15,19 @@ This repository contains the **case-battery-anc-v1** firmware and Windows compan
 
 ![Windows companion dashboard showing battery cards and ANC controls](docs/images/windows-dashboard.png)
 
-*Dashboard preview with sample battery values.* Click the tray icon to open this window at the lower-right above the taskbar. Each card shows the latest available battery reading and charging state. Select an enabled ANC mode to request a change; the current selection follows the mode confirmed by the headphones.
+*Sample readings.* Click the tray icon for battery status and ANC controls.
 
-## Connection diagrams
+## Connection
 
-### Physical connection
+![Windows PC connected by USB to Pico 2 W, then Bluetooth to AirPods](docs/images/hardware-connection.png)
 
-![Windows PC illustration, USB link, Pico 2 W photo, Bluetooth link, and AirPods photo](docs/images/hardware-connection.png)
-
-*Hardware overview. Product photos: [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-pico-2/) and [Apple Newsroom](https://www.apple.com/newsroom/2024/09/apple-introduces-airpods-4-and-a-hearing-health-experience-with-airpods-pro-2/). Windows PC and connection symbols are illustrations. Photos are not to scale.*
-
-![Physical block diagram: Windows computer connected by USB to Pico 2 W, then Bluetooth to AirPods](docs/images/physical-connection.png)
-
-Plug the Pico into the computer over USB and pair the AirPods with the Pico. The Pico handles Bluetooth; Windows sees a USB audio device and a serial port. The Windows companion runs on the computer and uses that same USB cable.
-
-### Audio and application data
-
-![Readable block diagrams for stereo playback, microphone audio, and battery ANC controls](docs/images/audio-control-paths.png)
-
-The companion reads cached battery information and sends ANC requests through the Pico. Audio applications use the separate USB audio interface, so the companion does not carry the playback or microphone stream. Closing the companion stops monitoring; it does not disconnect the AirPods Bluetooth link.
+Connect the PC to the Pico over **USB**, then pair AirPods with the Pico over **Bluetooth (BT)**. [Photo credits](docs/images/ATTRIBUTION.md).
 
 ## Standard Bluetooth adapter vs. USB AirPods
 
 **With the microphone on, standard Bluetooth Classic switches to voice-call audio. USB AirPods keeps stereo playback running.**
 
-![Two-way audio comparison: Bluetooth HFP speaker and microphone at 8 or 16 kHz mono versus USB AirPods 48 kHz stereo playback and a 64 kHz USB microphone interface](docs/images/bluetooth-comparison.png)
+![With the microphone active: Bluetooth HFP uses 8 or 16 kHz mono audio; USB AirPods keeps 48 kHz stereo playback with a separate AACP microphone stream](docs/images/bluetooth-comparison.png)
 
 - **Standard Bluetooth Classic (HFP):** both speaker and microphone use mono call audio: **8 kHz narrowband** or **16 kHz wideband**, depending on the negotiated codec. This is the familiar switch from stereo music to voice-call sound when the headset microphone opens. These rates are documented by [Microsoft](https://learn.microsoft.com/en-us/windows-hardware/drivers/bluetooth/bluetooth-classic-audio).
 - **USB AirPods:** playback stays at **48 kHz stereo** while the microphone uses a separate AACP/AAC-ELD path. The firmware presents a **64 kHz mono USB microphone interface** to Windows (`USB_MIC_SAMPLE_RATE` in `src/tinyusb/usb_descriptors.h`). The decoder reports **48 kHz** and native microphone timing is still under investigation, so the USB interface rate must not be read as proven 64 kHz recording fidelity.
